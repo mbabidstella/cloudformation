@@ -1,0 +1,120 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: A simple VPC template with three public subnets
+Parameters:
+  EnvironmentName:
+    Description: The name of the environment
+    Type: String
+    Default: dev
+  VPCCIDR:
+    Description: The CIDR block for the VPC
+    Type: String
+    Default: 10.0.0.0/16
+  PublicSubnet1CIDR:
+    Description: The CIDR block for the first public subnet
+    Type: String
+    Default: 10.0.1.0/24
+  PublicSubnet2CIDR:
+    Description: The CIDR block for the second public subnet
+    Type: String
+    Default: 10.0.2.0/24
+  PublicSubnet3CIDR:
+    Description: The CIDR block for the third public subnet
+    Type: String
+    Default: 10.0.3.0/24
+Resources:
+  VPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: !Ref VPCCIDR
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Namey
+          Value: !Sub ${EnvironmentName}-vpc
+  InternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-igw
+  AttachGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref VPC
+      InternetGatewayId: !Ref InternetGateway
+  PublicRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-rtb
+  PublicRoute:
+    Type: AWS::EC2::Route
+    DependsOn: AttachGateway
+    Properties:
+      RouteTableId: !Ref PublicRouteTable
+      DestinationCidrBlock: 0.0.0.0/0
+      GatewayId: !Ref InternetGateway
+  PublicSubnet1:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: !Select [ 0, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet1CIDR
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref VPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${EnvironmentName}-public-subnet-1 
+  PublicSubnet2:
+    Type: AWS::EC2::Subnet 
+    Properties:
+      AvailabilityZone: !Select [ 1, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet2CIDR 
+      MapPublicIpOnLaunch: true 
+      VpcId: !Ref VPC 
+      Tags:
+        - Key: Name 
+          Value: !Sub ${EnvironmentName}-public-subnet-2 
+  PublicSubnet3:
+    Type: AWS::EC2::Subnet 
+    Properties:
+      AvailabilityZone: !Select [ 2, !GetAZs '' ]
+      CidrBlock: !Ref PublicSubnet3CIDR 
+      MapPublicIpOnLaunch: true 
+      VpcId: !Ref VPC 
+      Tags:
+        - Key: Name 
+          Value: !Sub ${EnvironmentName}-public-subnet-3 
+  PublicSubnet1RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet1
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnet2RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet2
+      RouteTableId: !Ref PublicRouteTable
+  PublicSubnet3RouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet3
+      RouteTableId: !Ref PublicRouteTable
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: estella-bucket 
+Outputs:
+  VPCID:
+    Description: The ID of the VPC
+    Value: !Ref VPC
+  PublicSubnet1ID:
+    Description: The ID of the first public subnet
+    Value: !Ref PublicSubnet1
+  PublicSubnet2ID:
+    Description: The ID of the second public subnet
+    Value: !Ref PublicSubnet2
+  PublicSubnet3ID:
+    Description: The ID of the third public subnet
+    Value: !Ref PublicSubnet3
