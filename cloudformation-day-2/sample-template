@@ -1,0 +1,76 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: This template provisions our dev network environment
+Metadata: {}
+Parameters: 
+  # Development VPC Parameters
+  DevVPCCidrBlockPara:
+    Description: 
+    Type: 
+  DevVPCEnableDnsSupportPara:
+    Description: 
+    Type: 
+  # Webserver subnet parameters
+  DevWebserverSubnetAZPara:
+    Description: 
+    Type: 
+  DevWebserverSubnetCidrBlockPara:
+    Description: 
+    Type: 
+  # Appserver subnet parameters
+  DevAppserverSubnetAZPara:
+    Description: 
+    Type: 
+  DevAppserverSubnetCidrBlockPara:
+    Description: 
+    Type: 
+  # Database subnet parameters
+  DevDBserverSubnetAZPara:
+    Description: 
+    Type: 
+  DevDBserverSubnetCidrBlockPara:
+    Description: 
+    Type:
+Mappings: {}
+Conditions: {}
+Resources: 
+  #devolopment VPC
+  DevVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 
+      EnableDnsSupport: 
+      Tags:
+        - Key: Name
+          Value: 
+  # webserver subnet
+  DevWebserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: 
+      VpcId: 
+      CidrBlock: 
+      Tags:
+        - Key: Name
+          Value: 
+  # appserver subnet
+  DevAppserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: 
+      VpcId: 
+      CidrBlock: 
+      Tags:
+        - Key: Name
+          Value: 
+  # databaseserver subnet
+  DevDBserverSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone: 
+      VpcId: 
+      CidrBlock: 
+      Tags:
+        - Key: Name
+          Value:             
+
+Outputs: {}
